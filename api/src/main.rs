@@ -81,17 +81,18 @@ async fn main() -> Result<()> {
     println!("Initializing Iris Face AI...");
     let engine = Arc::new(Mutex::new(FaceEngine::new()?));
 
-    // Fix: Proper initialization of CorsLayer
+
     let cors = CorsLayer::new()
         .allow_origin(Any) 
-        .allow_methods([Method::POST]) // Only allow POST
-        .allow_headers([header::CONTENT_TYPE]); // Fix: removed Method::POST from here
+        .allow_methods([Method::POST]) 
+        .allow_headers([header::CONTENT_TYPE]); 
 
-    // IMPORTANT: You must call .layer(cors) on the Router
+
     let app = Router::new()
         .route("/compare", post(handle_compare))
-        .layer(cors) // This applies the CORS policy to all routes
+        .layer(cors)
         .with_state(engine);
+        .route("/health", axum::routing::get(|| async { "OK" }))
     
     let port = 3002;
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await?;

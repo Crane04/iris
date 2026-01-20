@@ -4,7 +4,15 @@ Content-Type: application/json
 {
     "target_url": "https://static.wikia.nocookie.net/amazingspiderman/images/3/33/Tobey_Maguire_Infobox.png/revision/latest/scale-to-width-down/535?cb=20240322015635",
     "people": [
-      {"name": "Alice", "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqiVCCW7eH5Q_8q4VULShU7O8QnOgp7Us2RBNhAlnesh2_iho_D1Toosuxj_x66J1w8ks&usqp=CAU"},
-      {"name": "Bob", "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1RMxB8hqtNe37Tua2VWEg_Z79JPTjQmwvsQ&s"}
+    {
+      "name": "Maguire",
+      "image_url":
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqiVCCW7eH5Q_8q4VULShU7O8QnOgp7Us2RBNhAlnesh2_iho_D1Toosuxj_x66J1w8ks&usqp=CAU",
+    },
+    {
+      "name": "Tom",
+      "image_url":
+        "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/2/2f/Tom_Holland.jpg/revision/latest/scale-to-width-down/1200?cb=20220213015022",
+    },
     ]
 }
