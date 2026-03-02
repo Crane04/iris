@@ -3,12 +3,12 @@ mod face;
 mod stats;
 
 use axum::{
-    extract::{ConnectInfo, State},
+    extract::{ConnectInfo, Request, State},
     http::{Method, StatusCode, header},
     middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::{get, post},
-    Json, Request, Router,
+    Json, Router,
 };
 use anyhow::{anyhow, Result};
 use governor::{clock::DefaultClock, state::keyed::DefaultKeyedStateStore, Quota, RateLimiter};
