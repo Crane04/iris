@@ -1,4 +1,4 @@
-POST http://localhost:3000/compare 
+POST http://localhost:3002/compare 
 Content-Type: application/json
 
 {
@@ -16,3 +16,5 @@ Content-Type: application/json
     },
     ]
 }
+###
+http://localhost:3002/health

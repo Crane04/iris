@@ -14,7 +14,7 @@ const Implementation = () => {
   ];
 
   const codeExamples: Record<string, string> = {
-    curl: `curl -X POST http://api.iris.dev/compare \\
+    curl: `curl -X POST http://localhost:3002/compare \\
   -d '{
     "target_url": "https://img.url/target",
     "people": [
@@ -50,7 +50,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }],
     };
 
-    let res = client.post("http://api.iris.dev/compare")
+    let res = client.post("http://localhost:3002/compare")
         .json(&payload)
         .send()
         .await?;
@@ -70,7 +70,7 @@ payload = {
     ]
 }
 
-response = requests.post("http://api.iris.dev/compare", json=payload)
+response = requests.post("http://localhost:3002/compare", json=payload)
 print(response.json())`,
     javascript: `const payload = {
   target_url: "https://img.url/target",
@@ -82,7 +82,7 @@ print(response.json())`,
   ]
 };
 
-fetch("http://api.iris.dev/compare", {
+fetch("http://localhost:3002/compare", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(payload)
@@ -110,7 +110,7 @@ func main() {
 	}
 	
 	jsonData, _ := json.Marshal(payload)
-	resp, _ := http.Post("http://api.iris.dev/compare", "application/json", bytes.NewBuffer(jsonData))
+	resp, _ := http.Post("http://localhost:3002/compare", "application/json", bytes.NewBuffer(jsonData))
 	
 	fmt.Println("Status:", resp.Status)
 }`,

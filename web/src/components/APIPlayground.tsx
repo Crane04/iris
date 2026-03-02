@@ -4,7 +4,7 @@ import post from "../api";
 
 const APIPlayground = () => {
   const [targetUrl, setTargetUrl] = useState(
-    "https://static.wikia.nocookie.net/amazingspiderman/images/3/33/Tobey_Maguire_Infobox.png/revision/latest/scale-to-width-down/535?cb=20240322015635",
+    "https://www.shutterstock.com/image-photo/tobey-maguire-los-angeles-premiere-260nw-286825016.jpg",
   );
   const [people, setPeople] = useState([
     {
@@ -15,7 +15,7 @@ const APIPlayground = () => {
     {
       name: "Tom",
       image_url:
-        "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/2/2f/Tom_Holland.jpg/revision/latest/scale-to-width-down/1200?cb=20220213015022",
+        "https://hips.hearstapps.com/hmg-prod/images/tom-holland-attends-the-los-angeles-premiere-of-sony-news-photo-1683915930.jpg?crop=0.596xw:0.894xh;0.226xw,0.106xh&resize=1200:*",
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,12 +75,27 @@ const APIPlayground = () => {
               <label className="text-[10px] font-mono font-bold tracking-widest text-iris-purple uppercase">
                 target_url
               </label>
-              <input
-                value={targetUrl}
-                onChange={(e) => setTargetUrl(e.target.value)}
-                className="w-full bg-iris-grey border border-iris-purple p-4 font-mono text-xs focus:bg-iris-purple/5 outline-none text-white"
-                placeholder="The emergency capture URL"
-              />
+              <div className="flex gap-4">
+                <input
+                  value={targetUrl}
+                  onChange={(e) => setTargetUrl(e.target.value)}
+                  className="flex-1 bg-iris-grey border border-iris-purple p-4 font-mono text-xs focus:bg-iris-purple/5 outline-none text-white"
+                  placeholder="The emergency capture URL"
+                />
+                {targetUrl && (
+                  <div className="w-20 h-20 border border-iris-purple flex-shrink-0 overflow-hidden">
+                    <img
+                      src={targetUrl}
+                      alt="Target"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          "https://via.placeholder.com/80?text=Error";
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="space-y-4">
@@ -104,34 +119,57 @@ const APIPlayground = () => {
                   >
                     <button
                       onClick={() => removePerson(idx)}
-                      className="absolute top-2 right-2 text-zinc-600 hover:text-red-500"
+                      className="absolute top-2 right-2 text-zinc-600 hover:text-red-500 z-10"
                     >
                       <Trash2 className="w-3 h-3" />
                     </button>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <span className="text-[8px] font-mono text-zinc-600 uppercase">
-                          name
-                        </span>
-                        <input
-                          value={person.name}
-                          onChange={(e) =>
-                            updatePerson(idx, "name", e.target.value)
-                          }
-                          className="w-full bg-iris-black border border-zinc-800 p-2 font-mono text-[10px] focus:border-iris-purple outline-none"
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="md:col-span-2 grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <span className="text-[8px] font-mono text-zinc-600 uppercase">
+                            name
+                          </span>
+                          <input
+                            value={person.name}
+                            onChange={(e) =>
+                              updatePerson(idx, "name", e.target.value)
+                            }
+                            className="w-full bg-iris-black border border-zinc-800 p-2 font-mono text-[10px] focus:border-iris-purple outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[8px] font-mono text-zinc-600 uppercase">
+                            image_url
+                          </span>
+                          <input
+                            value={person.image_url}
+                            onChange={(e) =>
+                              updatePerson(idx, "image_url", e.target.value)
+                            }
+                            className="w-full bg-iris-black border border-zinc-800 p-2 font-mono text-[10px] focus:border-iris-purple outline-none"
+                          />
+                        </div>
                       </div>
-                      <div className="space-y-1">
-                        <span className="text-[8px] font-mono text-zinc-600 uppercase">
-                          image_url
-                        </span>
-                        <input
-                          value={person.image_url}
-                          onChange={(e) =>
-                            updatePerson(idx, "image_url", e.target.value)
-                          }
-                          className="w-full bg-iris-black border border-zinc-800 p-2 font-mono text-[10px] focus:border-iris-purple outline-none"
-                        />
+                      <div className="flex items-center justify-center">
+                        <div className="w-20 h-20 border border-zinc-800 overflow-hidden">
+                          {person.image_url ? (
+                            <img
+                              src={person.image_url}
+                              alt={person.name || `Person ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src =
+                                  "https://via.placeholder.com/80?text=Error";
+                              }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-iris-black">
+                              <span className="text-[10px] text-zinc-600 font-mono text-center">
+                                No Image
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

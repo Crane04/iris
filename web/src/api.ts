@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3002";
 console.log(`${backendUrl}`);
 
 const post = async (path: string, data: {}): Promise<any> => {

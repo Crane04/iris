@@ -91,8 +91,8 @@ async fn main() -> Result<()> {
     let app = Router::new()
         .route("/compare", post(handle_compare))
         .layer(cors)
-        .with_state(engine);
-        .route("/health", axum::routing::get(|| async { "OK" }))
+        .with_state(engine)
+        .route("/health", axum::routing::get(|| async { "OK" }));
     
     let port = 3002;
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await?;
