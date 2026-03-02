@@ -94,7 +94,7 @@ async fn main() -> Result<()> {
         .with_state(engine)
         .route("/health", axum::routing::get(|| async { "OK" }));
     
-    let port = 3002;
+    let port = 8080;
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await?;
     println!("Iris API running on http://localhost:{}", port);
     
