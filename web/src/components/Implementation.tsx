@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
+import backendUrl from "../constant";
 
 const Implementation = () => {
   const [activeLang, setActiveLang] = useState("curl");
@@ -14,7 +15,7 @@ const Implementation = () => {
   ];
 
   const codeExamples: Record<string, string> = {
-    curl: `curl -X POST http://localhost:3002/compare \\
+    curl: `curl -X POST ${backendUrl}/compare \\
   -d '{
     "target_url": "https://img.url/target",
     "people": [
@@ -50,7 +51,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }],
     };
 
-    let res = client.post("http://localhost:3002/compare")
+    let res = client.post("${backendUrl}/compare")
         .json(&payload)
         .send()
         .await?;
@@ -70,7 +71,7 @@ payload = {
     ]
 }
 
-response = requests.post("http://localhost:3002/compare", json=payload)
+response = requests.post("${backendUrl}/compare", json=payload)
 print(response.json())`,
     javascript: `const payload = {
   target_url: "https://img.url/target",
@@ -82,7 +83,7 @@ print(response.json())`,
   ]
 };
 
-fetch("http://localhost:3002/compare", {
+fetch("${backendUrl}/compare", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(payload)
@@ -110,7 +111,7 @@ func main() {
 	}
 	
 	jsonData, _ := json.Marshal(payload)
-	resp, _ := http.Post("http://localhost:3002/compare", "application/json", bytes.NewBuffer(jsonData))
+	resp, _ := http.Post("${backendUrl}/compare", "application/json", bytes.NewBuffer(jsonData))
 	
 	fmt.Println("Status:", resp.Status)
 }`,
