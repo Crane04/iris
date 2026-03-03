@@ -20,4 +20,4 @@ Content-Type: application/json
 http://localhost:8080/health
 
 ###
-http://localhost:8080/stats
+http://api.iris.crane04.dev/stats

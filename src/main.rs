@@ -12,6 +12,7 @@ use axum::{
 };
 use anyhow::{anyhow, Result};
 use governor::{clock::DefaultClock, state::keyed::DefaultKeyedStateStore, Quota, RateLimiter};
+use base64::{engine::general_purpose, Engine as _};
 use opencv::{core, imgcodecs, objdetect, prelude::*};
 use std::net::{IpAddr, SocketAddr};
 use std::num::NonZeroU32;
@@ -44,9 +45,14 @@ async fn rate_limit_middleware(
 }
 
 async fn download_and_decode(url: &str) -> Result<Mat> {
-    let client = reqwest::Client::builder().user_agent("IrisAPI/1.0").build()?;
-    let response = client.get(url).send().await?;
-    let bytes = response.bytes().await?;
+    let bytes: Vec<u8> = if url.starts_with("data:") {
+        let comma = url.find(',').ok_or_else(|| anyhow!("Invalid data URI"))?;
+        general_purpose::STANDARD.decode(&url[comma + 1..])?
+    } else {
+        let client = reqwest::Client::builder().user_agent("IrisAPI/1.0").build()?;
+        let response = client.get(url).send().await?;
+        response.bytes().await?.to_vec()
+    };
     let vector_uint8 = core::Vector::<u8>::from_iter(bytes);
     let img = imgcodecs::imdecode(&vector_uint8, imgcodecs::IMREAD_COLOR)?;
     if img.empty() { return Err(anyhow!("Empty image")); }
