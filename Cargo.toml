@@ -10,6 +10,7 @@ anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 axum = "0.7"
 tokio = { version = "1.0", features = ["full"] }
-tower-http = { version = "0.5", features = ["cors"] }
+tower-http = { version = "0.5", features = ["cors", "limit"] }
+tower = "0.4"
 governor = "0.6"
 base64 = "0.21"

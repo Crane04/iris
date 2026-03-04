@@ -9,7 +9,10 @@ use axum::{
     response::{IntoResponse, Response},
     routing::{get, post},
     Json, Router,
+  
 };
+use tower::ServiceBuilder;
+use tower_http::limit::RequestBodyLimitLayer;
 use anyhow::{anyhow, Result};
 use governor::{clock::DefaultClock, state::keyed::DefaultKeyedStateStore, Quota, RateLimiter};
 use base64::{engine::general_purpose, Engine as _};
@@ -141,10 +144,13 @@ async fn main() -> Result<()> {
         .allow_headers([header::CONTENT_TYPE]);
 
     let app = Router::new()
-        .route("/compare", post(handle_compare))
-        .route("/stats", get(handle_stats))
-        .route("/health", get(|| async { "OK" }))
+        .route("/v1/compare", post(handle_compare))
+        .route("/v1/stats", get(handle_stats))
+        .route("/v1/health", get(|| async { "OK" }))
         .layer(middleware::from_fn_with_state(state.clone(), rate_limit_middleware))
+        .layer(ServiceBuilder::new()
+            .layer(RequestBodyLimitLayer::new(50 * 1024 * 1024)) // 50MB limit
+        )
         .layer(cors)
         .with_state(state);
 
