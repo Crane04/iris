@@ -1,5 +1,6 @@
-POST http://localhost:8080/compare 
+POST http://localhost:3000/v1/compare 
 Content-Type: application/json
+X-API-KEY:iris_ad044ce4a754ecabd2223a5bd8b7f0ea85833b47bf69207ed9346ac93015876386781da606c65b87
 
 {
     "target_url": "https://static.wikia.nocookie.net/amazingspiderman/images/3/33/Tobey_Maguire_Infobox.png/revision/latest/scale-to-width-down/535?cb=20240322015635",
@@ -16,8 +17,9 @@ Content-Type: application/json
     }
     ]
 }
+  
 ###
-http://localhost:8080/health
+http://localhost:3000/health
 
 ###
-http://api.iris.crane04.dev/stats
+https://api.iris.crane04.dev/stats

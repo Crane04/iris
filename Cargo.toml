@@ -14,3 +14,4 @@ tower-http = { version = "0.5", features = ["cors", "limit"] }
 tower = "0.4"
 governor = "0.6"
 base64 = "0.21"
+dotenvy = "0.15"

@@ -9,8 +9,8 @@ use axum::{
     response::{IntoResponse, Response},
     routing::{get, post},
     Json, Router,
-  
 };
+use std::env;
 use tower::ServiceBuilder;
 use tower_http::limit::RequestBodyLimitLayer;
 use anyhow::{anyhow, Result};
@@ -21,18 +21,37 @@ use std::net::{IpAddr, SocketAddr};
 use std::num::NonZeroU32;
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use tower_http::cors::{Any, CorsLayer};
 use models::*;
 use face::*;
 use stats::*;
 
 type SharedRateLimiter = Arc<RateLimiter<IpAddr, DefaultKeyedStateStore<IpAddr>, DefaultClock>>;
 
+// Middleware: reject any request that doesn't carry the correct internal secret.
+// This ensures only our Node.js auth server can reach the Rust backend.
+async fn require_internal_secret(
+    State(state): State<AppState>,
+    request: Request,
+    next: Next,
+) -> Response {
+    let provided = request
+        .headers()
+        .get("x-internal-secret")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("");
+
+    if provided != state.internal_secret {
+        return StatusCode::UNAUTHORIZED.into_response();
+    }
+    next.run(request).await
+}
+
 #[derive(Clone)]
 struct AppState {
     engine: Arc<Mutex<FaceEngine>>,
     limiter: SharedRateLimiter,
     stats: RequestStats,
+    internal_secret: String,
 }
 
 async fn rate_limit_middleware(
@@ -125,6 +144,7 @@ async fn handle_stats(State(state): State<AppState>) -> Json<StatsResponse> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    dotenvy::dotenv().ok();
     println!("Initializing Iris Face AI...");
 
     // 5 requests/second per IP, burst up to 10
@@ -132,26 +152,27 @@ async fn main() -> Result<()> {
         .allow_burst(NonZeroU32::new(10).unwrap());
     let limiter: SharedRateLimiter = Arc::new(RateLimiter::keyed(quota));
 
+    let internal_secret = env::var("IRIS_INTERNAL_SECRET")
+        .expect("IRIS_INTERNAL_SECRET env var is required");
+
     let state = AppState {
         engine: Arc::new(Mutex::new(FaceEngine::new()?)),
         limiter,
         stats: RequestStats::new(),
+        internal_secret,
     };
 
-    let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods([Method::POST, Method::GET])
-        .allow_headers([header::CONTENT_TYPE]);
-
+    // CORS is no longer needed — the Rust backend is internal-only.
+    // Only the Node.js auth server talks to it, not browsers directly.
     let app = Router::new()
         .route("/v1/compare", post(handle_compare))
         .route("/v1/stats", get(handle_stats))
         .route("/v1/health", get(|| async { "OK" }))
         .layer(middleware::from_fn_with_state(state.clone(), rate_limit_middleware))
+        .layer(middleware::from_fn_with_state(state.clone(), require_internal_secret))
         .layer(ServiceBuilder::new()
             .layer(RequestBodyLimitLayer::new(50 * 1024 * 1024)) // 50MB limit
         )
-        .layer(cors)
         .with_state(state);
 
     let port = 8080;

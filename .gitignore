@@ -24,3 +24,5 @@ target
 *.onnx
 .onnx
 context.md
+.env
+*.env
